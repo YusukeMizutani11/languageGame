@@ -20,6 +20,6 @@ export class User {
   @Column({ default: null, unique: true })
   userName: string;
 
-  @Column({ default: null })
+  @Column({ default: null, unique: true })
   libraryId: string;
 }
