@@ -3,11 +3,14 @@ import { User } from '../entities/User';
 
 const userRepository = AppDataSource.getRepository(User);
 
+async function allUserData(): Promise<User[]> {
+  const allUsers = await userRepository.find();
+  return allUsers;
+}
+
 async function addUser(
   email: string,
   passwordHash: string,
-  firstName: string,
-  lastName: string,
   userName: string,
   libraryId: string
 ): Promise<User> {
@@ -15,10 +18,11 @@ async function addUser(
   let newUser = new User();
   newUser.email = email;
   newUser.passwordHash = passwordHash;
-  newUser.firstName = firstName;
-  newUser.lastName = lastName;
   newUser.userName = userName;
   newUser.libraryId = libraryId;
+
+  console.log(userName);
+  console.log('define username');
 
   // Then save it to the database
   // NOTES: We reassign to `newUser` so we can access
@@ -47,4 +51,19 @@ async function getUsersByViews(minViews: number): Promise<User[]> {
   return users;
 }
 
-export { addUser, getUserByEmail, getUserById, getUsersByViews };
+async function updateEmailAddress(userId: string, newEmail: string): Promise<User | null> {
+  const user = await getUserById(userId);
+
+  if (user) {
+    await userRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({ email: newEmail })
+      .where({ userId: user.userId })
+      .execute();
+  }
+
+  return user;
+}
+
+export { allUserData, addUser, getUserByEmail, getUserById, getUsersByViews, updateEmailAddress };

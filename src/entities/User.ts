@@ -11,15 +11,9 @@ export class User {
   @Column({ unique: true })
   passwordHash: string;
 
-  @Column({ default: null })
-  firstName: string;
-
-  @Column({ default: null })
-  lastName: string;
-
-  @Column({ default: null, unique: true })
+  @Column({ unique: true })
   userName: string;
 
-  @Column({ default: null, unique: true })
+  @Column({ default: null })
   libraryId: string;
 }

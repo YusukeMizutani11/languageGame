@@ -7,8 +7,14 @@ type DatabaseConstraintError = {
 type AuthRequest = {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
   userName: string;
   libraryId: string;
+};
+
+type UserIdParam = {
+  userId: string;
+};
+
+type NewEmailBody = {
+  email: string;
 };

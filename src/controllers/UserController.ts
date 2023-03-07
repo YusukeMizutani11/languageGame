@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
 import argon2 from 'argon2';
-import { addUser, getUserByEmail } from '../models/UserModel';
+import { addUser, getUserByEmail, allUserData, updateEmailAddress } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
 
 async function registerUser(req: Request, res: Response): Promise<void> {
-  const { email, password, firstName, lastName, userName, libraryId } = req.body as AuthRequest;
+  const { email, password, userName, libraryId } = req.body as AuthRequest;
 
   // IMPORTANT: Hash the password
   const passwordHash = await argon2.hash(password);
 
   try {
     // IMPORTANT: Store the `passwordHash` and NOT the plaintext password
-    const newUser = await addUser(email, passwordHash, firstName, lastName, userName, libraryId);
+    const newUser = await addUser(email, passwordHash, userName, libraryId);
     console.log(newUser);
     res.sendStatus(201);
   } catch (err) {
@@ -46,4 +46,24 @@ async function logIn(req: Request, res: Response): Promise<void> {
   res.sendStatus(200); // 200 OK
 }
 
-export { registerUser, logIn };
+async function getAllUsers(req: Request, res: Response): Promise<void> {
+  const users = await allUserData();
+
+  res.json(users);
+}
+
+async function updateUserEmail(req: Request, res: Response): Promise<void> {
+  const { email } = req.params as NewEmailBody;
+  const { userId } = req.params as UserIdParam;
+  let user = await getUserByEmail(email);
+
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+  user = await updateEmailAddress(userId, email);
+
+  res.json(user);
+}
+
+export { registerUser, logIn, getAllUsers, updateUserEmail };
