@@ -41,16 +41,6 @@ async function getUserById(userId: string): Promise<User | null> {
   return user;
 }
 
-async function getUsersByViews(minViews: number): Promise<User[]> {
-  const users = await userRepository
-    .createQueryBuilder('user')
-    .where('profileViews >= :minViews', { minViews }) // NOTES: the parameter `:minViews` must match the key name `minViews`
-    .select(['user.email', 'user.profileViews', 'user.joinedOn', 'user.userId'])
-    .getMany();
-
-  return users;
-}
-
 async function updateEmailAddress(userId: string, newEmail: string): Promise<User | null> {
   const user = await getUserById(userId);
 
@@ -66,4 +56,4 @@ async function updateEmailAddress(userId: string, newEmail: string): Promise<Use
   return user;
 }
 
-export { allUserData, addUser, getUserByEmail, getUserById, getUsersByViews, updateEmailAddress };
+export { allUserData, addUser, getUserByEmail, getUserById, updateEmailAddress };
